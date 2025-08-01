@@ -5,6 +5,7 @@ import { WalletService } from './wallet.service';
 import AppError from '../../errorHelpers/AppError';
 
 export const WalletController = {
+  //sudho wallet er jonno
   async getMyWallet(req: Request, res: Response) {
     try {
       const userId = req.user?.userId;
