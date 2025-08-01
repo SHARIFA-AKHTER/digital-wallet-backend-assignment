@@ -67,7 +67,7 @@ src/
 1. Clone the repo  
    ```bash
    git clone https://github.com/SHARIFA-AKHTER/digital-wallet-backend-assignment-5.git
-   cd digital-wallet-backend-assignment-5
+   cd digital-wallet-backend-assignment
 Install dependencies
 
 
@@ -98,7 +98,7 @@ GET /transactions/me - User/Agent own transactions
 
 GET /transactions - Admin view all transactions
 
-Admin
+Admin 
 GET /admin/users - View all users
 
 PATCH /admin/agents/:id/approve - Approve or suspend agents
