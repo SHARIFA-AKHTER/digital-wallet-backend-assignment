@@ -13,7 +13,23 @@ transactionRoutes.get(
 
 transactionRoutes.get(
   "/",
-  checkAuth(Role.ADMIN), 
+  checkAuth(Role.ADMIN,Role.USER), 
   TransactionController.getAllTransactions
 );
+transactionRoutes.post(
+  "/",
+  checkAuth(Role.USER,Role.AGENT), 
+  TransactionController.createTransaction
+);
 
+transactionRoutes.post(
+  "/cash-in",
+  checkAuth(Role.AGENT),
+  TransactionController.cashIn
+);
+
+transactionRoutes.post(
+  "/cash-out",
+  checkAuth(Role.AGENT),
+  TransactionController.cashOut
+);

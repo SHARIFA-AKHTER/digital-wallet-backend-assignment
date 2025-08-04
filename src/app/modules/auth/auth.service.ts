@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 import httpStatus from "http-status-codes";
 import bcrypt from "bcryptjs";
@@ -31,9 +32,14 @@ export const registerUser = async (userData: IUserRegister) => {
     role: userData.role || "USER",
   });
 
-  await Wallet.create({
+  // await Wallet.create({
+  //   user: newUser._id,
+  //   balance: 50,
+  // });
+   await Wallet.create({
     user: newUser._id,
-    balance: 50,
+    balance: 0,
+    isBlocked: false,
   });
 
   const accessToken = generateToken(

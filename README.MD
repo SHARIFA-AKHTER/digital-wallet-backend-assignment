@@ -24,7 +24,7 @@ Users can register, manage wallets, and perform core financial operations such a
 - Withdraw money from any user’s wallet (cash-out)  
 - View commission history (optional)  
 
-### Admins can:
+### Admins can USE:
 - View all users, agents, wallets, and transactions  
 - Block/unblock user wallets  
 - Approve/suspend agents  

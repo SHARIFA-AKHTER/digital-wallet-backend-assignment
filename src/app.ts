@@ -9,22 +9,52 @@ import passport from "passport";
 import "./app/config/passport";
 import { transactionRoutes } from "./app/modules/transaction/transaction.route";
 import { walletRoutes } from "./app/modules/wallet/wallet.route";
+import { agentRoutes } from "./app/modules/agents/agentRoutes";
+
 
 const app = express();
 
-app.use(cors());
-app.use(helmet());
+app.use(cors({
+  origin: "http://localhost:5173",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+}));
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize());
 
 
+// Helmet security headers with updated CSP and relaxed cross-origin policies
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "http://localhost:5173"],
+        styleSrc: ["'self'", "http://localhost:5173", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:"],
+        connectSrc: ["'self'", "http://localhost:5173"],
+      },
+    },
+  })
+);
+
+// Relax these cross-origin policies for your frontend access
+app.use((req, res, next) => {
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+  res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+  next();
+});
 app.use('/api/users', UserRoutes)
 app.use('/api/transactions', transactionRoutes)
 
-app.use('/api/wallets', walletRoutes)
+app.use('/api/wallet', walletRoutes)
 
 app.use("/api/auth", AuthRoutes);
+
+app.use("/api/admin/agents", agentRoutes);
 
 app.get("/", (req: Request, res: Response) =>{
     res.status(200).json({

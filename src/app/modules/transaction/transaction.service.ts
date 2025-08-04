@@ -3,7 +3,7 @@ import { Transaction } from './transaction.model';
 export const TransactionService = {
   async createTransaction(data: {
     walletId: string;
-    type: 'add' | 'withdraw' | 'send' | 'receive';
+    type: 'add' | 'withdraw' | 'send' | 'receive' | 'cashIn' | 'cashOut'; // ✅ add cashIn & cashOut here
     amount: number;
     fee?: number;
     commission?: number;
@@ -36,3 +36,4 @@ export const TransactionService = {
     return Transaction.find().sort({ createdAt: -1 });
   },
 };
+

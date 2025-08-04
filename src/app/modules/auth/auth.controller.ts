@@ -27,40 +27,6 @@ export const register = catchAsync(async (req: Request, res: Response) => {
   });
 })
 
-
-// const credentialsLogin = (req: Request, res: Response, next: NextFunction) => {
-//   passport.authenticate("local", async (err: any, user: Partial<IUser>, info: any) => {
-//     try {
-//       if (err) {
-//         return res.status(500).json({ success: false, message: err.message || "Server Error" });
-//       }
-
-//       if (!user) {
-//         return res.status(401).json({ success: false, message: info?.message || "Login failed" });
-//       }
-
-//       const tokens = await createUserToken(user);
-//       const userObj = typeof user.toObject === "function" ? user.toObject() : user;
-//       const { password, ...userData } = userObj;
-
-//       setAuthCookie(res, tokens);
-
-//       return res.status(200).json({
-//         success: true,
-//         message: "User logged in successfully",
-//         data: {
-//           accessToken: tokens.accessToken,
-//           refreshToken: tokens.refreshToken,
-//           user: userData,
-//         },
-//       });
-//     } catch (error) {
-//       next(error);
-//     }
-//   })(req, res, next);
-// };
-
-
 const credentialsLogin = (req: Request, res: Response, next: NextFunction) => {
   passport.authenticate("local", async (err: any, user: HydratedDocument<IUser> | null, info: any) => {
     try {

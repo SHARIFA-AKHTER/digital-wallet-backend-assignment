@@ -1,4 +1,3 @@
-
 export enum Role {
   USER = "USER",
   AGENT = "AGENT",
@@ -6,6 +5,7 @@ export enum Role {
 }
 
 export enum IsActive {
+  PENDING = "PENDING",
   ACTIVE = "ACTIVE",
   INACTIVE = "INACTIVE",
   BLOCKED = "BLOCKED",
