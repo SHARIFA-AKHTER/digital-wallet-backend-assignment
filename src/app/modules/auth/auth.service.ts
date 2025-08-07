@@ -9,12 +9,14 @@ import { createNewAccessTokenWithRefreshToken } from "../../utils/userTokens";
 import { envVars } from "../../config/env";
 import { Wallet } from "../wallet/wallet.model";
 import { generateToken } from "../../utils/jwt";
+import { IsActive, Role } from "../user/user.interface";
 
 interface IUserRegister {
   name: string;
   email: string;
   password: string;
-  role?: string;
+  role: "AGENT" | "USER" | "ADMIN";
+  isActive: "PENDING" | "ACTIVE" | "SUSPENDED";
 }
 
 export const registerUser = async (userData: IUserRegister) => {
@@ -29,33 +31,35 @@ export const registerUser = async (userData: IUserRegister) => {
     name: userData.name,
     email: userData.email,
     password: hashedPassword,
-    role: userData.role || "USER",
+    role: userData.role || Role.USER,
+    isActive: userData.isActive || IsActive.PENDING,
   });
 
   // await Wallet.create({
   //   user: newUser._id,
   //   balance: 50,
   // });
-   await Wallet.create({
+  await Wallet.create({
     user: newUser._id,
     balance: 0,
     isBlocked: false,
   });
 
   const accessToken = generateToken(
-    { userId: newUser._id.toString(), 
-      role: newUser.role, 
-       email: newUser.email,
+    {
+      userId: newUser._id.toString(),
+      role: newUser.role,
+      email: newUser.email,
     },
     process.env.JWT_ACCESS_SECRET!,
     process.env.JWT_ACCESS_EXPIRES || "15d"
   );
 
   const refreshToken = generateToken(
-    {  userId: newUser._id.toString(),
-       role: newUser.role ,
-      email: newUser.email, 
-
+    {
+      userId: newUser._id.toString(),
+      role: newUser.role,
+      email: newUser.email,
     },
     process.env.JWT_REFRESH_SECRET!,
     process.env.JWT_REFRESH_EXPIRES || "30d"
@@ -71,7 +75,6 @@ const getNewAccessToken = async (refreshToken: string) => {
   return {
     accessToken: newAccessToken,
   };
-
 };
 
 const resetPassword = async (

@@ -48,14 +48,3 @@ const loadEnvVariables = (): EnvConfig => {
 
 export const envVars = loadEnvVariables();
 
-// ✅ Note: This version ensures all required env variables are validated
-// Update your .env file accordingly:
-// PORT=5000
-// DB_URL=mongodb://localhost:27017/wallet
-// JWT_ACCESS_SECRET=your-access-secret
-// JWT_REFRESH_SECRET=your-refresh-secret
-// JWT_ACCESS_EXPIRES=1d
-// JWT_REFRESH_EXPIRES=7d
-// BCRYPT_SALT_ROUND=10
-// FRONTEND_URL=http://localhost:5173
-

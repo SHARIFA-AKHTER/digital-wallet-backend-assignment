@@ -11,13 +11,34 @@ import { setAuthCookie } from "../../utils/setCookie";
 import { createUserToken } from "../../utils/userTokens";
 import { catchAsync } from "../../utils/catchAsync";
 import AppError from "../../errorHelpers/AppError";
-import { IUser } from "../user/user.interface";
+import { IsActive, IUser, Role } from "../user/user.interface";
 import { HydratedDocument } from "mongoose";
 
-export const register = catchAsync(async (req: Request, res: Response) => {
-  const { name, email, password, role } = req.body;
+// export const register = catchAsync(async (req: Request, res: Response) => {
+//   const { name, email, password, role } = req.body;
 
-  const { accessToken, refreshToken, user } = await registerUser({ name, email, password, role });
+//   const { accessToken, refreshToken, user } = await registerUser({ name, email, password, role });
+
+//   res.status(201).json({
+//     message: "User registered successfully",
+//     accessToken,
+//     refreshToken,
+//     user,
+//   });
+// })
+
+
+export const register = catchAsync(async (req: Request, res: Response) => {
+  const { name, email, password } = req.body;
+
+  // 🔐 Force role and isActive
+  const { accessToken, refreshToken, user } = await registerUser({
+  name,
+    email,
+    password,
+    role: Role.AGENT,
+    isActive: IsActive.PENDING,
+  });
 
   res.status(201).json({
     message: "User registered successfully",
@@ -25,8 +46,7 @@ export const register = catchAsync(async (req: Request, res: Response) => {
     refreshToken,
     user,
   });
-})
-
+});
 const credentialsLogin = (req: Request, res: Response, next: NextFunction) => {
   passport.authenticate("local", async (err: any, user: HydratedDocument<IUser> | null, info: any) => {
     try {

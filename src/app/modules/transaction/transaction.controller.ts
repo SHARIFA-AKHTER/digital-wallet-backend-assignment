@@ -34,7 +34,7 @@ export const TransactionController = {
       // ✅ Create the transaction
       const transaction = await TransactionService.createTransaction({
         walletId: receiverWallet._id.toString(),
-        type: "send",
+        type: "cashIn",
         amount,
         fromUser: user.userId,
         toUser: toUserId,
@@ -54,60 +54,59 @@ export const TransactionController = {
     }
   },
 
-
-   // ✅ AGENT Cash-In: Add money to user wallet
   // ✅ AGENT Cash-In: Add money to user wallet
-async cashIn(req: Request, res: Response) {
-  try {
-    const agent = req.user as { userId: string };
-    const { userId, amount } = req.body;
+  // ✅ AGENT Cash-In: Add money to user wallet
+  async cashIn(req: Request, res: Response) {
+    try {
+      const agent = req.user as { userId: string };
+      const { userId, amount } = req.body;
 
-    const userWallet = await WalletService.findWalletByUserId(userId);
-    if (!userWallet || userWallet.isBlocked) {
-      return res.status(httpStatus.BAD_REQUEST).json({
+      const userWallet = await WalletService.findWalletByUserId(userId);
+      if (!userWallet || userWallet.isBlocked) {
+        return res.status(httpStatus.BAD_REQUEST).json({
+          success: false,
+          message: "Target user's wallet is not active or not found",
+        });
+      }
+
+      // update user balance
+      await WalletService.increaseBalance(userWallet._id, amount);
+
+      // ✅ Debug log before transaction creation
+      console.log("Creating CashIn Transaction with data:", {
+        walletId: userWallet._id,
+        type: "cashIn",
+        amount,
+        fromUser: agent.userId,
+        toUser: userId,
+        status: "completed",
+      });
+
+      // create transaction
+      const transaction = await TransactionService.createTransaction({
+        walletId: userWallet._id.toString(),
+        type: "cashIn",
+        amount,
+        fromUser: agent.userId,
+        toUser: userId,
+        status: "completed",
+      });
+
+      res.status(httpStatus.CREATED).json({
+        success: true,
+        message: "Cash-in successful",
+        data: transaction,
+      });
+    } catch (error: any) {
+      console.error("Cash-In Error:", error); // ✅ Optional: for server error debug
+      res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
         success: false,
-        message: "Target user's wallet is not active or not found",
+        message: error.message,
       });
     }
+  },
 
-    // update user balance
-    await WalletService.increaseBalance(userWallet._id, amount);
-
-    // ✅ Debug log before transaction creation
-    console.log("Creating CashIn Transaction with data:", {
-      walletId: userWallet._id,
-      type: "cashIn",
-      amount,
-      fromUser: agent.userId,
-      toUser: userId,
-      status: "completed",
-    });
-
-    // create transaction
-    const transaction = await TransactionService.createTransaction({
-      walletId: userWallet._id.toString(),
-      type: "cashIn",
-      amount,
-      fromUser: agent.userId,
-      toUser: userId,
-      status: "completed",
-    });
-
-    res.status(httpStatus.CREATED).json({
-      success: true,
-      message: "Cash-in successful",
-      data: transaction,
-    });
-  } catch (error: any) {
-    console.error("Cash-In Error:", error); // ✅ Optional: for server error debug
-    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-      success: false,
-      message: error.message,
-    });
-  }
-},
-
-async cashOut(req: Request, res: Response) {
+  async cashOut(req: Request, res: Response) {
     try {
       const agent = req.user as { userId: string };
       const { userId, amount } = req.body;
@@ -164,7 +163,9 @@ async cashOut(req: Request, res: Response) {
         });
       }
 
-      const transactions = await TransactionService.getTransactionsByUser(user.userId);
+      const transactions = await TransactionService.getTransactionsByUser(
+        user.userId
+      );
 
       res.status(httpStatus.OK).json({
         success: true,
@@ -175,6 +176,60 @@ async cashOut(req: Request, res: Response) {
       res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
         success: false,
         message: err.message,
+      });
+    }
+  },
+
+  // ✅ GET Agent's Commission-based Transactions
+  // async getAgentCommissions(req: Request, res: Response) {
+  //   try {
+  //     console.log("🔍 Incoming req.user:", req.user);
+
+  //     const agent = req.user as { userId: string };
+
+  //     const transactions =
+  //       await TransactionService.getAgentCommissionsByAgentId(agent.userId);
+
+  //     res.status(httpStatus.OK).json({
+  //       success: true,
+  //       message: "Agent commissions fetched successfully",
+  //       data: transactions,
+  //     });
+  //   } catch (error: any) {
+  //     console.error("Commission fetch error:", error);
+  //     res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+  //       success: false,
+  //       message: "Server Error",
+  //     });
+  //   }
+  // },
+
+   async getAgentCommissions(req: Request, res: Response) {
+    try {
+
+      const agent = req.user as { userId: string };
+      console.log("👉 agent.userId:", agent.userId);
+
+
+      if (!agent?.userId) {
+        return res.status(httpStatus.BAD_REQUEST).json({
+          success: false,
+          message: "Agent userId missing in token",
+        });
+      }
+
+      const transactions = await TransactionService.getAgentCommissionsByAgentId(agent.userId);
+
+      res.status(httpStatus.OK).json({
+        success: true,
+        message: "Agent commissions fetched successfully",
+        data: transactions,
+      });
+    } catch (error: any) {
+      console.error("Commission fetch error:", error);
+      res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: "Server Error",
       });
     }
   },
@@ -196,4 +251,3 @@ async cashOut(req: Request, res: Response) {
     }
   },
 };
-

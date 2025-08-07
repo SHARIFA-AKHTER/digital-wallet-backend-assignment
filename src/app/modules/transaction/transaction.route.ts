@@ -33,3 +33,8 @@ transactionRoutes.post(
   checkAuth(Role.AGENT),
   TransactionController.cashOut
 );
+transactionRoutes.get(
+  "/agent-commissions",
+  checkAuth(Role.AGENT,Role.ADMIN),
+  TransactionController.getAgentCommissions
+);
