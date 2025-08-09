@@ -27,13 +27,12 @@ import { HydratedDocument } from "mongoose";
 //   });
 // })
 
-
 export const register = catchAsync(async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
 
   // 🔐 Force role and isActive
   const { accessToken, refreshToken, user } = await registerUser({
-  name,
+    name,
     email,
     password,
     role: Role.AGENT,
@@ -48,41 +47,51 @@ export const register = catchAsync(async (req: Request, res: Response) => {
   });
 });
 const credentialsLogin = (req: Request, res: Response, next: NextFunction) => {
-  passport.authenticate("local", async (err: any, user: HydratedDocument<IUser> | null, info: any) => {
-    try {
-      if (err) {
-        return res.status(500).json({ success: false, message: err.message || "Server Error" });
+  passport.authenticate(
+    "local",
+    async (err: any, user: HydratedDocument<IUser> | null, info: any) => {
+      try {
+        if (err) {
+          return res
+            .status(500)
+            .json({ success: false, message: err.message || "Server Error" });
+        }
+
+        if (!user) {
+          return res
+            .status(401)
+            .json({ success: false, message: info?.message || "Login failed" });
+        }
+
+        const tokens = await createUserToken(user);
+        const userObj = user.toObject();
+        const { password, ...userData } = userObj;
+
+        setAuthCookie(res, tokens);
+
+        return res.status(200).json({
+          success: true,
+          message: "User logged in successfully",
+          data: {
+            accessToken: tokens.accessToken,
+            refreshToken: tokens.refreshToken,
+            user: userData,
+          },
+        });
+      } catch (error) {
+        next(error);
       }
-
-      if (!user) {
-        return res.status(401).json({ success: false, message: info?.message || "Login failed" });
-      }
-
-      const tokens = await createUserToken(user);
-      const userObj = user.toObject();
-      const { password, ...userData } = userObj;
-
-      setAuthCookie(res, tokens);
-
-      return res.status(200).json({
-        success: true,
-        message: "User logged in successfully",
-        data: {
-          accessToken: tokens.accessToken,
-          refreshToken: tokens.refreshToken,
-          user: userData,
-        },
-      });
-    } catch (error) {
-      next(error);
     }
-  })(req, res, next);
+  )(req, res, next);
 };
 
 const getNewAccessToken = catchAsync(async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken;
   if (!refreshToken) {
-    throw new AppError(httpStatus.BAD_REQUEST, "No refresh token found in cookies");
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "No refresh token found in cookies"
+    );
   }
 
   const tokenInfo = await AuthServices.getNewAccessToken(refreshToken);
@@ -112,7 +121,11 @@ const resetPassword = catchAsync(async (req: Request, res: Response) => {
   const { oldPassword, newPassword } = req.body;
   const decodedToken = req.user;
 
-  await AuthServices.resetPassword(oldPassword, newPassword, decodedToken as JwtPayload);
+  await AuthServices.resetPassword(
+    oldPassword,
+    newPassword,
+    decodedToken as JwtPayload
+  );
 
   sendResponse(res, {
     success: true,
@@ -122,18 +135,24 @@ const resetPassword = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const googleCallbackController = catchAsync(async (req: Request, res: Response) => {
-  let redirectTo = req.query.state ? (req.query.state as string) : "";
-  if (redirectTo.startsWith("/")) redirectTo = redirectTo.slice(1);
+const googleCallbackController = catchAsync(
+  async (req: Request, res: Response) => {
+    let redirectTo = req.query.state ? (req.query.state as string) : "";
+    if (redirectTo.startsWith("/")) redirectTo = redirectTo.slice(1);
 
-  const user = req.user;
-  if (!user) throw new AppError(httpStatus.NOT_FOUND, "User Not Found");
+    const user = req.user;
+    if (!user) throw new AppError(httpStatus.NOT_FOUND, "User Not Found");
 
-  const tokenInfo = await createUserToken(user);
-  setAuthCookie(res, tokenInfo);
+    const typedUser: Partial<IUser> = {
+      ...user,
+      role: user.role as Role,
+    };
+    const tokenInfo = createUserToken(typedUser);
+    setAuthCookie(res, tokenInfo);
 
-  res.redirect(`${process.env.FRONTEND_URL}/${redirectTo}`);
-});
+    res.redirect(`${process.env.FRONTEND_URL}/${redirectTo}`);
+  }
+);
 
 export const AuthControllers = {
   register,

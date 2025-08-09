@@ -66,8 +66,23 @@ import { User } from "./user.model";
 import { IUser } from "./user.interface";
 import AppError from "../../errorHelpers/AppError";
 import httpStatus from "http-status-codes";
-;
+import bcrypt from "bcrypt";
 
+export const createUser = async (userData: IUser) => {
+
+  const saltRounds = 10;
+  const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
+
+  const newUser = await User.create({
+    ...userData,
+    password: hashedPassword,
+    role: userData.role || "USER", // default role
+    isActive: "ACTIVE",
+    isDeleted: false,
+  });
+
+  return newUser;
+};
 
 /**
  * Get all users (excluding soft-deleted ones)
@@ -117,7 +132,7 @@ const softDeleteUser = async (id: string): Promise<void> => {
 };
 
 export const UserServices = {
-  // createUser,
+  createUser,
   getAllUsers,
   getUserById,
   updateUserProfile,

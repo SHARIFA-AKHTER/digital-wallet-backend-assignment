@@ -12,7 +12,6 @@ const router = Router();
 
 router.post("/register", AuthControllers.register);
 
-
 router.post(
   "/login",
   validateRequest(loginSchema),

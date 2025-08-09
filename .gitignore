@@ -19,3 +19,4 @@ build/
 
 # TypeScript cache
 *.tsbuildinfo
+.vercel
