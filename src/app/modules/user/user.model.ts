@@ -1,4 +1,3 @@
-
 import { Schema, model } from "mongoose";
 import { IUser, Role, IsActive } from "./user.interface";
 // import bcrypt from "bcrypt";
@@ -28,6 +27,7 @@ const userSchema = new Schema<IUser>(
       enum: Object.values(IsActive),
       default: IsActive.ACTIVE,
     },
+    commissionRate: { type: Number, default: 0 },
     isDeleted: {
       type: Boolean,
       default: false,
@@ -40,7 +40,6 @@ const userSchema = new Schema<IUser>(
     timestamps: true,
   }
 );
-
 
 // userSchema.pre("save", async function (next) {
 //   if (!this.isModified("password")) return next();

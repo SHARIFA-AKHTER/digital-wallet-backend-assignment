@@ -27,15 +27,66 @@ import { HydratedDocument } from "mongoose";
 //   });
 // })
 
-export const register = catchAsync(async (req: Request, res: Response) => {
-  const { name, email, password } = req.body;
 
-  // 🔐 Force role and isActive
+// const credentialsLogin = (req: Request, res: Response, next: NextFunction) => {
+//   passport.authenticate(
+//     "local",
+//     async (err: any, user: HydratedDocument<IUser> | null, info: any) => {
+//       try {
+//         if (err) {
+//           return res
+//             .status(500)
+//             .json({ success: false, message: err.message || "Server Error" });
+//         }
+
+//         if (!user) {
+//           return res
+//             .status(401)
+//             .json({ success: false, message: info?.message || "Login failed" });
+//         }
+
+//         const tokens = await createUserToken(user);
+//         const userObj = user.toObject();
+//         const { password, ...userData } = userObj;
+
+//         setAuthCookie(res, tokens);
+
+//         return res.status(200).json({
+//           success: true,
+//           message: "User logged in successfully",
+//           data: {
+//             accessToken: tokens.accessToken,
+//             refreshToken: tokens.refreshToken,
+//             user: userData,
+//           },
+//         });
+//       } catch (error) {
+//         next(error);
+//       }
+//     }
+//   )(req, res, next);
+// };
+
+export const register = catchAsync(async (req: Request, res: Response) => {
+  const { name, email, password, role } = req.body;
+
+  let finalRole: Role;
+
+  if (email === process.env.SUPER_ADMIN_EMAIL) {
+  finalRole = Role.ADMIN;
+} else if (role?.toUpperCase() === Role.AGENT) {
+  finalRole = Role.AGENT;
+} else if (role?.toUpperCase() === Role.ADMIN) {
+  finalRole = Role.ADMIN;
+} else {
+  finalRole = Role.USER;
+}
+
   const { accessToken, refreshToken, user } = await registerUser({
     name,
     email,
     password,
-    role: Role.AGENT,
+    role: finalRole,
     isActive: IsActive.PENDING,
   });
 
@@ -46,6 +97,7 @@ export const register = catchAsync(async (req: Request, res: Response) => {
     user,
   });
 });
+
 const credentialsLogin = (req: Request, res: Response, next: NextFunction) => {
   passport.authenticate(
     "local",
@@ -64,8 +116,34 @@ const credentialsLogin = (req: Request, res: Response, next: NextFunction) => {
         }
 
         const tokens = await createUserToken(user);
-        const userObj = user.toObject();
-        const { password, ...userData } = userObj;
+
+        const { password, ...restUser } = user.toObject();
+
+        let filteredUserData;
+
+        if (user.role === Role.ADMIN) {
+          filteredUserData = {
+            _id: restUser._id,
+            name: restUser.name,
+            email: restUser.email,
+            role: restUser.role,
+          };
+        } else if (user.role === Role.AGENT) {
+          filteredUserData = {
+            _id: restUser._id,
+            name: restUser.name,
+            email: restUser.email,
+            role: restUser.role,
+            commissionRate: restUser.commissionRate || 0,
+          };
+        } else {
+          filteredUserData = {
+            _id: restUser._id,
+            name: restUser.name,
+            email: restUser.email,
+            role: restUser.role,
+          };
+        }
 
         setAuthCookie(res, tokens);
 
@@ -75,7 +153,7 @@ const credentialsLogin = (req: Request, res: Response, next: NextFunction) => {
           data: {
             accessToken: tokens.accessToken,
             refreshToken: tokens.refreshToken,
-            user: userData,
+            user: filteredUserData,
           },
         });
       } catch (error) {

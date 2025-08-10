@@ -63,26 +63,46 @@
 // };
 
 import { User } from "./user.model";
-import { IUser } from "./user.interface";
+import { IUser, Role } from "./user.interface";
 import AppError from "../../errorHelpers/AppError";
 import httpStatus from "http-status-codes";
 import bcrypt from "bcrypt";
 
-export const createUser = async (userData: IUser) => {
+// export const createUser = async (userData: IUser) => {
+//   const saltRounds = 10;
+//   const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
 
+//   const newUser = await User.create({
+//     ...userData,
+//     password: hashedPassword,
+//     role: (userData.role as Role) || Role.USER, 
+//     isActive: "ACTIVE",
+//     isDeleted: false,
+//   });
+
+//   return newUser;
+// };
+
+export const createUser = async (userData: IUser) => {
   const saltRounds = 10;
   const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
+
+  const roleToSave: Role =
+    (Object.values(Role) as string[]).includes(userData.role)
+      ? (userData.role as Role)
+      : Role.USER;
 
   const newUser = await User.create({
     ...userData,
     password: hashedPassword,
-    role: userData.role || "USER", // default role
+    role: roleToSave,
     isActive: "ACTIVE",
     isDeleted: false,
   });
 
   return newUser;
 };
+
 
 /**
  * Get all users (excluding soft-deleted ones)

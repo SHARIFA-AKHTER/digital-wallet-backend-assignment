@@ -18,7 +18,7 @@ transactionRoutes.get(
 );
 transactionRoutes.post(
   "/",
-  checkAuth(Role.USER,Role.AGENT), 
+  checkAuth(Role.USER,Role.AGENT,Role.ADMIN), 
   TransactionController.createTransaction
 );
 
