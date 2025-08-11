@@ -15,7 +15,7 @@ router.get(
 );
 router.patch(
   "/update-profile",
-  checkAuth(Role.USER),
+  checkAuth(Role.USER,Role.AGENT, Role.ADMIN),
   UserControllers.updateProfile
 );
 router.delete(

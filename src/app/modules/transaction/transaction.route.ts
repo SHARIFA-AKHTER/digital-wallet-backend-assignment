@@ -7,13 +7,13 @@ export const transactionRoutes = express.Router();
 
 transactionRoutes.get(
   "/me",
-  checkAuth(Role.USER, Role.AGENT), 
+  checkAuth(Role.USER, Role.AGENT,Role.ADMIN), 
   TransactionController.getMyTransactions
 );
 
 transactionRoutes.get(
   "/",
-  checkAuth(Role.ADMIN,Role.USER), 
+  checkAuth(Role.USER,Role.AGENT,Role.ADMIN), 
   TransactionController.getAllTransactions
 );
 transactionRoutes.post(
