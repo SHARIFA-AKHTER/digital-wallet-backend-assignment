@@ -16,8 +16,7 @@ router.post(
   "/login",
   validateRequest(loginSchema),
   AuthControllers.credentialsLogin, 
-  validateRequest(loginSchema),
-  AuthControllers.credentialsLogin
+ 
 );
 router.post("/refresh-token", AuthControllers.getNewAccessToken);
 router.post("/logout", AuthControllers.logout);

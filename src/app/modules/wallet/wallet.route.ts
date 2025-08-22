@@ -19,6 +19,11 @@ router.post(
   WalletController.addMoney
 );
 router.post(
+  "/send-money",
+  checkAuth(Role.USER, Role.AGENT),
+  WalletController.sendMoney
+);
+router.post(
   "/withdraw",
   checkAuth(Role.USER, Role.AGENT),
   WalletController.withdrawMoney

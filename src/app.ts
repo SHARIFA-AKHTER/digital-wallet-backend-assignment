@@ -47,14 +47,14 @@ app.use((req, res, next) => {
   res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
   next();
 });
-app.use('/api/users', UserRoutes)
-app.use('/api/transactions', transactionRoutes)
+app.use('/api/v1/users', UserRoutes)
+app.use('/api/v1/transactions', transactionRoutes)
 
-app.use('/api/wallet', walletRoutes)
+app.use('/api/v1/wallet', walletRoutes)
 
-app.use("/api/auth", AuthRoutes);
+app.use("/api/v1/auth", AuthRoutes); 
 
-app.use("/api/admin/agents", agentRoutes);
+app.use("/api/v1/admin/agents", agentRoutes);
 
 app.get("/", (req: Request, res: Response) =>{
     res.status(200).json({

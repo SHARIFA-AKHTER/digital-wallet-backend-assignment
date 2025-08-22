@@ -78,6 +78,7 @@ import { Request, Response } from "express";
 import httpStatus from "http-status-codes";
 import { WalletService } from "./wallet.service";
 import AppError from "../../errorHelpers/AppError";
+import { Wallet } from "./wallet.model";
 
 export const WalletController = {
   async getMyWallet(req: Request, res: Response) {
@@ -139,6 +140,30 @@ export const WalletController = {
     }
   },
 
+
+  async sendMoney(req: Request, res: Response) {
+    try {
+      const senderId = (req.user as any)?.userId;
+      const { receiverId, amount } = req.body;
+
+      if (!senderId) {
+        return res.status(400).json({ success: false, message: "Sender not found" });
+      }
+
+      const result = await WalletService.sendMoney(senderId, receiverId, amount);
+
+      return res.status(httpStatus.OK).json({
+        success: true,
+        message: "Money sent successfully",
+        data: result,
+      });
+    } catch (err: any) {
+      return res.status(err.statusCode || 500).json({
+        success: false,
+        message: err.message,
+      });
+    }
+  },
   async withdrawMoney(req: Request, res: Response) {
     try {
       const userId = (req.user as any)?.userId as string;

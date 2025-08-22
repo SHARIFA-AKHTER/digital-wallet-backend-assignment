@@ -98,7 +98,9 @@ export const register = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+
 const credentialsLogin = (req: Request, res: Response, next: NextFunction) => {
+  
   passport.authenticate(
     "local",
     async (err: any, user: HydratedDocument<IUser> | null, info: any) => {
