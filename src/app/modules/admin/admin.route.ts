@@ -15,7 +15,7 @@ import {
 const router = Router();
 
 // 🔐 Only ADMIN
-router.use(checkAuth("Role.ADMIN"));
+router.use(checkAuth("ADMIN"));
 
 // Overview
 router.get("/overview", getAdminOverview);
