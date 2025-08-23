@@ -10,6 +10,7 @@ import "./app/config/passport";
 import { transactionRoutes } from "./app/modules/transaction/transaction.route";
 import { walletRoutes } from "./app/modules/wallet/wallet.route";
 import { agentRoutes } from "./app/modules/agents/agentRoutes";
+import { adminRoutes } from "./app/modules/admin/admin.route";
 
 
 const app = express();
@@ -55,6 +56,8 @@ app.use('/api/v1/wallet', walletRoutes)
 app.use("/api/v1/auth", AuthRoutes); 
 
 app.use("/api/v1/admin/agents", agentRoutes);
+
+app.use("/api/v1/admin", adminRoutes);
 
 app.get("/", (req: Request, res: Response) =>{
     res.status(200).json({

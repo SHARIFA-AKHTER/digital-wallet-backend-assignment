@@ -1,12 +1,12 @@
 import { Router } from "express";
 import { approveAgent, getPendingAgents, rejectAgent } from "./agentController";
-import { Role } from "../user/user.interface";  // Adjust path as needed
+import { Role } from "../user/user.interface";  
 import { checkAuth } from "../../middlewares/checkAuth";
 
 const router = Router();
 
 // Admin-only routes
-router.use(checkAuth(Role.ADMIN));
+router.use(checkAuth(Role.ADMIN,Role.AGENT));
 
 // Get all pending agents
 router.get("/pending", getPendingAgents);
