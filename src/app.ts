@@ -12,6 +12,7 @@ import { walletRoutes } from "./app/modules/wallet/wallet.route";
 import { agentRoutes } from "./app/modules/agents/agentRoutes";
 import { adminRoutes } from "./app/modules/admin/admin.route";
 import { AboutRoutes } from "./app/modules/about/about.route";
+import { pricingRoutes } from "./app/modules/pricing/pricing.route";
 
 
 const app = express();
@@ -60,6 +61,7 @@ app.use("/api/v1/admin/agents", agentRoutes);
 
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/about", AboutRoutes);
+app.use("/api/v1/pricing", pricingRoutes);
 
 app.get("/", (req: Request, res: Response) =>{
     res.status(200).json({
