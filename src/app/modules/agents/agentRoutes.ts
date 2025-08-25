@@ -6,7 +6,7 @@ import { checkAuth } from "../../middlewares/checkAuth";
 const router = Router();
 
 // Admin-only routes
-router.use(checkAuth(Role.ADMIN,Role.AGENT));
+router.use(checkAuth(Role.ADMIN,Role.AGENT,Role.USER));
 
 // Get all pending agents
 router.get("/pending", getPendingAgents);
