@@ -13,6 +13,7 @@ import { agentRoutes } from "./app/modules/agents/agentRoutes";
 import { adminRoutes } from "./app/modules/admin/admin.route";
 import { AboutRoutes } from "./app/modules/about/about.route";
 import { pricingRoutes } from "./app/modules/pricing/pricing.route";
+import { faqRoutes } from "./app/modules/faq/faq.route";
 
 
 const app = express();
@@ -62,6 +63,7 @@ app.use("/api/v1/admin/agents", agentRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/about", AboutRoutes);
 app.use("/api/v1/pricing", pricingRoutes);
+app.use("/api/v1/faq", faqRoutes);
 
 app.get("/", (req: Request, res: Response) =>{
     res.status(200).json({
