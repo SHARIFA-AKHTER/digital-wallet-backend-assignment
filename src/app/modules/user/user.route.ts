@@ -20,7 +20,7 @@ router.patch(
 );
 router.delete(
   "/delete-profile",
-  checkAuth(Role.USER),
+  checkAuth(Role.USER,Role.AGENT),
   UserControllers.deleteProfile
 );
 

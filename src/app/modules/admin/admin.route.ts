@@ -33,7 +33,7 @@ router.get("/transactions", getAllTransactions);
 
 // System Settings (optional)
 router.get("/settings", getSettings);
-router.put("/settings", updateSettings);
+router.patch("/settings-update", updateSettings);
 
 // Admin Profile Update
 router.patch("/profile", updateProfile);

@@ -1,8 +1,9 @@
 import express from "express";
-import { getAllFAQs } from "./faq.controller";
+import { addFAQ, getFAQs } from "./faq.controller";
 
 const router = express.Router();
 
-router.get("/", getAllFAQs);
+router.get("/", getFAQs);
+router.post("/", addFAQ);
 
 export const faqRoutes = router;

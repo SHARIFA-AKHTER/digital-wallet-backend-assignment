@@ -24,13 +24,13 @@ transactionRoutes.post(
 
 transactionRoutes.post(
   "/cash-in",
-  checkAuth(Role.AGENT,Role.USER),
+  checkAuth(Role.AGENT,Role.USER,Role.ADMIN),
   TransactionController.cashIn
 );
 
 transactionRoutes.post(
   "/cash-out",
-  checkAuth(Role.AGENT,Role.USER),
+  checkAuth(Role.AGENT,Role.USER,Role.ADMIN),
   TransactionController.cashOut
 );
 transactionRoutes.get(
