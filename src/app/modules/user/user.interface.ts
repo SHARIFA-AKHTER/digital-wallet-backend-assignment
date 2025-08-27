@@ -20,4 +20,7 @@ export interface IUser {
   isActive?: IsActive;
   isDeleted?: boolean;
   avatar?: string;
+  agentStatus?: string;
+  isBlocked?: boolean;
+    phone?: string; 
 }
