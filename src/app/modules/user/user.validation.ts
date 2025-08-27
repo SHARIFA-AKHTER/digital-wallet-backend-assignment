@@ -12,4 +12,5 @@ export const createUserZodSchema = z.object({
 export const updateUserSchema = z.object({
   name: z.string().optional(),
   avatar: z.string().url().optional(),
+   password: z.string().min(6).optional(), 
 });
