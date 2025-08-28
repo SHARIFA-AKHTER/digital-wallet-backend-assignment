@@ -78,7 +78,6 @@ import { Request, Response } from "express";
 import httpStatus from "http-status-codes";
 import { WalletService } from "./wallet.service";
 import AppError from "../../errorHelpers/AppError";
-import { Wallet } from "./wallet.model";
 
 export const WalletController = {
   async getMyWallet(req: Request, res: Response) {
