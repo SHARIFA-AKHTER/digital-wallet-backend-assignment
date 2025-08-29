@@ -147,7 +147,7 @@ const credentialsLogin = (req: Request, res: Response, next: NextFunction) => {
           };
         }
 
-        // setAuthCookie(res, tokens);
+        setAuthCookie(res, tokens);
 
         return res.status(200).json({
           success: true,

@@ -18,13 +18,16 @@ import { faqRoutes } from "./app/modules/faq/faq.route";
 
 const app = express();
 
+app.set("trust proxy", 1)
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: [
+    "http://localhost:5173", 
+    "https://digital-wallet-api-client.vercel.app"
+  ],
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 }));
-
 app.use(express.json());
 app.use(cookieParser());
 
@@ -37,10 +40,10 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "http://localhost:5173"],
-        styleSrc: ["'self'", "http://localhost:5173", "'unsafe-inline'"],
+        scriptSrc: ["'self'", "https://digital-wallet-api-client.vercel.app"],
+        styleSrc: ["'self'", "https://digital-wallet-api-client.vercel.app", "'unsafe-inline'"],
         imgSrc: ["'self'", "data:"],
-        connectSrc: ["'self'", "http://localhost:5173"],
+        connectSrc: ["'self'", "https://digital-wallet-api-client.vercel.app"],
       },
     },
   })
