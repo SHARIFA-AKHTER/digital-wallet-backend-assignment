@@ -264,7 +264,7 @@ passport.use(
         const email = profile.emails?.[0]?.value;
 
         if (!email) {
-          console.error("❌ Google profile has no email");
+         
           return done(null, false, {
             message: "Email not found in Google profile",
           });
@@ -288,16 +288,13 @@ passport.use(
         // ✅ Done - Pass user to next middleware
         return done(null, user);
       } catch (err) {
-        console.error("❌ Error in Google Strategy:", err);
         return done(err as Error, false);
       }
     }
   )
 );
 
-// ----------------------
-// Session Serialize/Deserialize
-// ----------------------
+
 passport.serializeUser((user: any, done) => {
   done(null, user.id);
 });
@@ -306,12 +303,12 @@ passport.deserializeUser(async (id: string, done) => {
   try {
     const user = await User.findById(id);
     if (!user) {
-      console.error("❌ User not found during deserialization");
+    
       return done(null, false);
     }
     done(null, user);
   } catch (err) {
-    console.error("❌ Error during deserialization:", err);
+    
     done(err);
   }
 });

@@ -184,20 +184,18 @@ const resetPassword = catchAsync(async (req: Request, res: Response) => {
 
 export const googleCallbackController = catchAsync(
   async (req: Request, res: Response) => {
-    console.log("✅ Google callback reached!");
-    console.log("👉 req.user =", req.user);
 
     let redirectTo = req.query.state ? (req.query.state as string) : "";
     if (redirectTo.startsWith("/")) redirectTo = redirectTo.slice(1);
 
     const user = req.user;
     if (!user) {
-      console.error("❌ Google callback error: req.user not found");
+  
       res.status(httpStatus.UNAUTHORIZED).json({
         success: false,
         message: "User not found in Google callback",
       });
-      return; // ✅ stop here without returning Response
+      return; 
     }
 
     const typedUser: Partial<IUser> = {
@@ -207,7 +205,6 @@ export const googleCallbackController = catchAsync(
     const tokenInfo = createUserToken(typedUser);
     setAuthCookie(res, tokenInfo);
 
-    console.log("✅ Google user authenticated successfully!");
     res.redirect(`https://digital-wallet-api-client.vercel.app/${redirectTo}`);
   }
 );
