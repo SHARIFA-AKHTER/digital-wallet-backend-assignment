@@ -22,5 +22,6 @@ export interface IUser {
   avatar?: string;
   agentStatus?: string;
   isBlocked?: boolean;
-    phone?: string; 
+  phone?: string;
+  commissionRate?: number;
 }

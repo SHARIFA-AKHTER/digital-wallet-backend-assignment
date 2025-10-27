@@ -14,59 +14,6 @@ import AppError from "../../errorHelpers/AppError";
 import { IsActive, IUser, Role } from "../user/user.interface";
 import { HydratedDocument } from "mongoose";
 
-// export const register = catchAsync(async (req: Request, res: Response) => {
-//   const { name, email, password, role } = req.body;
-
-//   const { accessToken, refreshToken, user } = await registerUser({ name, email, password, role });
-
-//   res.status(201).json({
-//     message: "User registered successfully",
-//     accessToken,
-//     refreshToken,
-//     user,
-//   });
-// })
-
-
-// const credentialsLogin = (req: Request, res: Response, next: NextFunction) => {
-//   passport.authenticate(
-//     "local",
-//     async (err: any, user: HydratedDocument<IUser> | null, info: any) => {
-//       try {
-//         if (err) {
-//           return res
-//             .status(500)
-//             .json({ success: false, message: err.message || "Server Error" });
-//         }
-
-//         if (!user) {
-//           return res
-//             .status(401)
-//             .json({ success: false, message: info?.message || "Login failed" });
-//         }
-
-//         const tokens = await createUserToken(user);
-//         const userObj = user.toObject();
-//         const { password, ...userData } = userObj;
-
-//         setAuthCookie(res, tokens);
-
-//         return res.status(200).json({
-//           success: true,
-//           message: "User logged in successfully",
-//           data: {
-//             accessToken: tokens.accessToken,
-//             refreshToken: tokens.refreshToken,
-//             user: userData,
-//           },
-//         });
-//       } catch (error) {
-//         next(error);
-//       }
-//     }
-//   )(req, res, next);
-// };
-
 export const register = catchAsync(async (req: Request, res: Response) => {
   const { name, email, password, role } = req.body;
 
