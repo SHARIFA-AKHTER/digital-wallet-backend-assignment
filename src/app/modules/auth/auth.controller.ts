@@ -230,7 +230,7 @@ const googleCallbackController = catchAsync(
     const tokenInfo = createUserToken(typedUser);
     setAuthCookie(res, tokenInfo);
 
-    res.redirect(`${process.env.FRONTEND_URL}/${redirectTo}`);
+    res.redirect(`${"https://digital-wallet-api-client.vercel.app"}/${redirectTo}`);
   }
 );
 
