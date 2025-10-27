@@ -20,14 +20,14 @@ export const register = catchAsync(async (req: Request, res: Response) => {
   let finalRole: Role;
 
   if (email === process.env.SUPER_ADMIN_EMAIL) {
-  finalRole = Role.ADMIN;
-} else if (role?.toUpperCase() === Role.AGENT) {
-  finalRole = Role.AGENT;
-} else if (role?.toUpperCase() === Role.ADMIN) {
-  finalRole = Role.ADMIN;
-} else {
-  finalRole = Role.USER;
-}
+    finalRole = Role.ADMIN;
+  } else if (role?.toUpperCase() === Role.AGENT) {
+    finalRole = Role.AGENT;
+  } else if (role?.toUpperCase() === Role.ADMIN) {
+    finalRole = Role.ADMIN;
+  } else {
+    finalRole = Role.USER;
+  }
 
   const { accessToken, refreshToken, user } = await registerUser({
     name,
@@ -45,9 +45,7 @@ export const register = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-
 const credentialsLogin = (req: Request, res: Response, next: NextFunction) => {
-  
   passport.authenticate(
     "local",
     async (err: any, user: HydratedDocument<IUser> | null, info: any) => {
@@ -162,13 +160,45 @@ const resetPassword = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const googleCallbackController = catchAsync(
+// const googleCallbackController = catchAsync(
+//   async (req: Request, res: Response) => {
+
+//     let redirectTo = req.query.state ? (req.query.state as string) : "";
+//     if (redirectTo.startsWith("/")) redirectTo = redirectTo.slice(1);
+
+//     const user = req.user;
+//     if (!user) throw new AppError(httpStatus.NOT_FOUND, "User Not Found");
+
+//     const typedUser: Partial<IUser> = {
+//       ...user,
+//       role: user.role as Role,
+//     };
+//     const tokenInfo = createUserToken(typedUser);
+//     setAuthCookie(res, tokenInfo);
+
+//     res.redirect(
+//       `${"https://digital-wallet-api-client.vercel.app"}/${redirectTo}`
+//     );
+//   }
+// );
+
+export const googleCallbackController = catchAsync(
   async (req: Request, res: Response) => {
+    console.log("✅ Google callback reached!");
+    console.log("👉 req.user =", req.user);
+
     let redirectTo = req.query.state ? (req.query.state as string) : "";
     if (redirectTo.startsWith("/")) redirectTo = redirectTo.slice(1);
 
     const user = req.user;
-    if (!user) throw new AppError(httpStatus.NOT_FOUND, "User Not Found");
+    if (!user) {
+      console.error("❌ Google callback error: req.user not found");
+      res.status(httpStatus.UNAUTHORIZED).json({
+        success: false,
+        message: "User not found in Google callback",
+      });
+      return; // ✅ stop here without returning Response
+    }
 
     const typedUser: Partial<IUser> = {
       ...user,
@@ -177,7 +207,8 @@ const googleCallbackController = catchAsync(
     const tokenInfo = createUserToken(typedUser);
     setAuthCookie(res, tokenInfo);
 
-    res.redirect(`${"https://digital-wallet-api-client.vercel.app"}/${redirectTo}`);
+    console.log("✅ Google user authenticated successfully!");
+    res.redirect(`https://digital-wallet-api-client.vercel.app/${redirectTo}`);
   }
 );
 
