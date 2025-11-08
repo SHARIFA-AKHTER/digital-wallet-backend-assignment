@@ -182,30 +182,61 @@ const resetPassword = catchAsync(async (req: Request, res: Response) => {
 //   }
 // );
 
+// export const googleCallbackController = catchAsync(
+//   async (req: Request, res: Response) => {
+
+//     let redirectTo = req.query.state ? (req.query.state as string) : "";
+//     if (redirectTo.startsWith("/")) redirectTo = redirectTo.slice(1);
+
+//     const user = req.user;
+//     if (!user) {
+
+//       res.status(httpStatus.UNAUTHORIZED).json({
+//         success: false,
+//         message: "User not found in Google callback",
+//       });
+//       return;
+//     }
+
+//     const typedUser: Partial<IUser> = {
+//       ...user,
+//       role: user.role as Role,
+//     };
+//     const tokenInfo = createUserToken(typedUser);
+//     setAuthCookie(res, tokenInfo);
+
+//     res.redirect(`https://digital-wallet-api-client.vercel.app/${redirectTo}`);
+//   }
+// );
+
 export const googleCallbackController = catchAsync(
   async (req: Request, res: Response) => {
-
     let redirectTo = req.query.state ? (req.query.state as string) : "";
     if (redirectTo.startsWith("/")) redirectTo = redirectTo.slice(1);
 
     const user = req.user;
     if (!user) {
-  
       res.status(httpStatus.UNAUTHORIZED).json({
         success: false,
         message: "User not found in Google callback",
       });
-      return; 
+      return;
     }
 
     const typedUser: Partial<IUser> = {
       ...user,
       role: user.role as Role,
     };
-    const tokenInfo = createUserToken(typedUser);
+
+    // ✅ Must use await
+    const tokenInfo = await createUserToken(typedUser as IUser);
+
     setAuthCookie(res, tokenInfo);
 
-    res.redirect(`https://digital-wallet-api-client.vercel.app/${redirectTo}`);
+    const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+
+    // ✅ No return here
+    res.redirect(`${FRONTEND_URL}/${redirectTo}`);
   }
 );
 
