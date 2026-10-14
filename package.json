@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node ./dist/server.js",
-    "dev": "ts-node-dev --respawn --transpile-only ./src/server.ts",
-    "build": " npm install --force && tsc",
+    "start": "node api.js && node ./dist/server.js",
+    "dev": "node api.js && ts-node-dev --respawn --transpile-only ./src/server.ts",
+    "build": "node api.js && npm install --force && tsc",
     "lint": "npx eslint ./src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
