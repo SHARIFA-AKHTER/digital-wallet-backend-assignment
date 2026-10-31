@@ -1,6 +1,4 @@
 # Env files
-.env
-.env.local
 
 # Node modules
 node_modules/
@@ -25,3 +23,4 @@ build/
 branch_structure.json
 temp_auto_push.bat
 temp_interactive_push.bat
+config.bat
